@@ -1,5 +1,6 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendPushNotification } from "@/lib/push";
 
 export type QueuePickupStatus = "requested" | "assigned" | "en_route";
 
@@ -129,20 +130,30 @@ export async function assignAgentToPickup(pickupId: string, agentId: string): Pr
   // between a stale client and assigning a pickup to a suspended agent.
   const { data: agent, error: agentError } = await supabase
     .from("agents")
-    .select("reputation_status")
+    .select("reputation_status, expo_push_token")
     .eq("id", agentId)
     .maybeSingle();
   if (agentError) throw agentError;
   if (!agent) throw new Error("Agent not found");
   if (agent.reputation_status === "suspended") throw new Error("This agent is suspended and can't be assigned pickups");
 
-  const { error } = await supabase
+  const { data: pickup, error } = await supabase
     .from("pickups")
     .update({ agent_id: agentId, status: "assigned" })
     .eq("id", pickupId)
-    .eq("status", "requested"); // guard against double-assigning a pickup someone else already claimed
+    .eq("status", "requested") // guard against double-assigning a pickup someone else already claimed
+    .select("address_text")
+    .maybeSingle();
 
   if (error) throw error;
+
+  if (pickup) {
+    await sendPushNotification(
+      agent.expo_push_token,
+      "New pickup assigned",
+      `Pick up at ${pickup.address_text}`,
+    );
+  }
 }
 
 export async function unassignPickup(pickupId: string): Promise<void> {

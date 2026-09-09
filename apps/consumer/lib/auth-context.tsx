@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type PropsWith
 import type { Session } from "@takacycle/supabase-client";
 import type { AppUser } from "@takacycle/types";
 import { supabase } from "./supabase";
+import { registerForPushNotifications } from "./push-notifications";
 
 interface AuthContextValue {
   session: Session | null;
@@ -12,6 +13,7 @@ interface AuthContextValue {
   completeProfile: (fullName: string) => Promise<{ error: string | null }>;
   refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -40,6 +42,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
           }
         : null,
     );
+
+    // Fire-and-forget — a denied permission or missing EAS project shouldn't block sign-in.
+    if (data) registerForPushNotifications(data.id).catch(() => {});
   }
 
   useEffect(() => {
@@ -86,6 +91,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
         if (session) await loadProfile(session.user.id);
       },
       async signOut() {
+        await supabase.auth.signOut();
+      },
+      async deleteAccount() {
+        const { error } = await supabase.functions.invoke("delete-account");
+        if (error) throw error;
         await supabase.auth.signOut();
       },
     }),

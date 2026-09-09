@@ -149,6 +149,8 @@ Deno.serve(async (req) => {
 
   const newlyAwardedBadges = await awardEligibleBadges(admin, pickup.user_id);
 
+  await notifyConsumer(admin, pickup.user_id, scaleReadingKg, pointsAwarded, newlyAwardedBadges);
+
   return new Response(JSON.stringify({ pointsAwarded, isAuditSample, newlyAwardedBadges }), {
     status: 200,
     headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
@@ -182,4 +184,35 @@ async function awardEligibleBadges(admin: any, userId: string): Promise<string[]
   }
 
   return toAward.map((t) => t.tier);
+}
+
+const BADGE_LABEL: Record<string, string> = { bronze: "Bronze", silver: "Silver", gold: "Gold" };
+
+// Best-effort, same as awardEligibleBadges — a missing/invalid push token or a
+// down push service shouldn't fail a verification that already succeeded.
+// deno-lint-ignore no-explicit-any
+async function notifyConsumer(
+  admin: any,
+  userId: string,
+  kg: number,
+  pointsAwarded: number,
+  newlyAwardedBadges: string[],
+): Promise<void> {
+  const { data: user, error } = await admin.from("app_users").select("expo_push_token").eq("id", userId).maybeSingle();
+  if (error || !user?.expo_push_token) return;
+
+  let body = `You earned ${pointsAwarded} points for ${kg}kg recycled.`;
+  if (newlyAwardedBadges.length > 0) {
+    body += ` You just earned the ${newlyAwardedBadges.map((t) => BADGE_LABEL[t] ?? t).join(", ")} badge!`;
+  }
+
+  try {
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ to: user.expo_push_token, title: "Pickup verified!", body }),
+    });
+  } catch (err) {
+    console.error("Failed to send push notification:", err);
+  }
 }

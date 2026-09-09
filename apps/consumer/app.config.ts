@@ -16,6 +16,7 @@ const config: ExpoConfig = {
         locationWhenInUsePermission: "Takacycle uses your location to set your pickup address.",
       },
     ],
+    "expo-notifications",
   ],
   ios: {
     supportsTablet: true,
@@ -44,6 +45,13 @@ const config: ExpoConfig = {
   web: {
     favicon: "./assets/favicon.png",
     bundler: "metro",
+  },
+  // Set by `eas init` — until then, push-notification registration no-ops (see
+  // lib/push-notifications.ts). Fill EAS_PROJECT_ID_CONSUMER in .env once you have it.
+  extra: {
+    eas: {
+      projectId: process.env.EAS_PROJECT_ID_CONSUMER,
+    },
   },
 };
 

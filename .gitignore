@@ -34,3 +34,10 @@ pnpm-debug.log*
 # editor
 .vscode/
 .idea/
+
+# agents
+.agents/
+.claude/
+.cursor/
+
+design_doc.md

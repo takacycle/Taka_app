@@ -5,6 +5,7 @@ import { useAuth } from "../../lib/auth-context";
 import { getPointsSummary, type PointsSummary } from "../../lib/points";
 import { listMyPickups, findUpcomingPickup, type MyPickup } from "../../lib/my-pickups";
 import { getBadgeProgress, currentTier, nextBadge, type BadgeProgress } from "../../lib/badges";
+import { getActiveChallenge, type ActiveChallenge } from "../../lib/challenges";
 
 const TIER_LABEL: Record<string, string> = { bronze: "Bronze", silver: "Silver", gold: "Gold" };
 
@@ -15,10 +16,11 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default function HomeScreen() {
-  const { profile, session, signOut } = useAuth();
+  const { profile, session } = useAuth();
   const [summary, setSummary] = useState<PointsSummary | null>(null);
   const [upcoming, setUpcoming] = useState<MyPickup | null>(null);
   const [badges, setBadges] = useState<BadgeProgress[]>([]);
+  const [challenge, setChallenge] = useState<ActiveChallenge | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const load = useCallback(() => {
@@ -30,14 +32,16 @@ export default function HomeScreen() {
         return Promise.all([
           listMyPickups(session.user.id),
           getBadgeProgress(session.user.id, pointsSummary.kgRecycled),
+          profile?.zoneId ? getActiveChallenge(profile.zoneId) : Promise.resolve(null),
         ]);
       })
-      .then(([pickups, badgeProgress]) => {
+      .then(([pickups, badgeProgress, activeChallenge]) => {
         setUpcoming(findUpcomingPickup(pickups));
         setBadges(badgeProgress);
+        setChallenge(activeChallenge);
       })
       .finally(() => setIsLoading(false));
-  }, [session]);
+  }, [session, profile?.zoneId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -49,8 +53,8 @@ export default function HomeScreen() {
     <View style={styles.screen}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hey {profile?.fullName ?? "there"} 👋</Text>
-        <Pressable onPress={signOut}>
-          <Text style={styles.signOut}>Sign out</Text>
+        <Pressable onPress={() => router.push("/(app)/settings")}>
+          <Text style={styles.headerLink}>Settings</Text>
         </Pressable>
       </View>
 
@@ -116,6 +120,29 @@ export default function HomeScreen() {
             <Text style={styles.viewAll}>Leaderboard →</Text>
           </Pressable>
 
+          {challenge && (
+            <View style={styles.challengeCard}>
+              <View style={styles.sectionHeaderRow}>
+                <Text style={styles.sectionLabel}>Active Challenge</Text>
+                <Text style={styles.viewAll}>
+                  Ends {new Date(challenge.endsAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                </Text>
+              </View>
+              <Text style={styles.challengeName}>{challenge.name}</Text>
+              <View style={styles.challengeBarTrack}>
+                <View
+                  style={[
+                    styles.challengeBarFill,
+                    { width: `${Math.min(100, Math.max(0, (challenge.progressKg / challenge.targetKg) * 100))}%` },
+                  ]}
+                />
+              </View>
+              <Text style={styles.challengeMeta}>
+                {challenge.progressKg.toFixed(1)}kg / {challenge.targetKg}kg collected by your zone
+              </Text>
+            </View>
+          )}
+
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Upcoming Pickup</Text>
             <Pressable onPress={() => router.push("/(app)/pickups")}>
@@ -155,7 +182,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   greeting: { fontSize: 22, fontWeight: "700", color: "#272727" },
-  signOut: { color: "#868686", fontSize: 13 },
+  headerLink: { color: "#868686", fontSize: 13 },
   content: { padding: 20, gap: 16 },
   pointsCard: { backgroundColor: DARK_GREEN, borderRadius: 20, padding: 20, gap: 16 },
   pointsCardTop: { flexDirection: "row", justifyContent: "space-between" },
@@ -190,6 +217,11 @@ const styles = StyleSheet.create({
   sectionLabel: { fontSize: 10, color: "#868686", fontWeight: "600", textTransform: "uppercase" },
   tierValue: { fontSize: 16, fontWeight: "700", color: "#272727", marginTop: 2 },
   tierSubtext: { fontSize: 11, color: "#868686", marginTop: 2 },
+  challengeCard: { backgroundColor: "#fff", borderRadius: 20, padding: 16, gap: 8 },
+  challengeName: { fontSize: 16, fontWeight: "700", color: "#272727" },
+  challengeBarTrack: { height: 8, borderRadius: 4, backgroundColor: "#eee", overflow: "hidden" },
+  challengeBarFill: { height: "100%", borderRadius: 4, backgroundColor: GREEN },
+  challengeMeta: { fontSize: 11, color: "#868686" },
   sectionHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   sectionTitle: { fontSize: 14, fontWeight: "600", color: "#272727" },
   viewAll: { fontSize: 12, fontWeight: "600", color: GREEN },

@@ -21,7 +21,16 @@ const NAV_ITEMS = [
 
 // Only these routes exist so far — the rest render as disabled placeholders
 // instead of dead links, matching the full nav from the design.
-const BUILT_ROUTES = new Set(["/", "/pickups", "/pickups/completed", "/map", "/audits", "/fraud"]);
+const BUILT_ROUTES = new Set([
+  "/",
+  "/pickups",
+  "/pickups/completed",
+  "/map",
+  "/agents",
+  "/audits",
+  "/fraud",
+  "/challenges",
+]);
 
 export function Sidebar() {
   const pathname = usePathname();

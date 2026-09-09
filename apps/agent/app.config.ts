@@ -22,6 +22,7 @@ const config: ExpoConfig = {
         cameraPermission: "Takacycle Agent uses your camera to photograph collected material and the scale reading.",
       },
     ],
+    "expo-notifications",
   ],
   ios: {
     supportsTablet: true,
@@ -50,6 +51,13 @@ const config: ExpoConfig = {
   web: {
     favicon: "./assets/favicon.png",
     bundler: "metro",
+  },
+  // Set by `eas init` — until then, push-notification registration no-ops (see
+  // lib/push-notifications.ts). Fill EAS_PROJECT_ID_AGENT in .env once you have it.
+  extra: {
+    eas: {
+      projectId: process.env.EAS_PROJECT_ID_AGENT,
+    },
   },
 };
 

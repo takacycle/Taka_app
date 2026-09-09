@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type PropsWith
 import type { Session } from "@takacycle/supabase-client";
 import type { Agent } from "@takacycle/types";
 import { supabase } from "./supabase";
+import { registerForPushNotifications } from "./push-notifications";
 
 interface AuthContextValue {
   session: Session | null;
@@ -39,6 +40,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
           }
         : null,
     );
+
+    // Fire-and-forget — a denied permission or missing EAS project shouldn't block sign-in.
+    if (data) registerForPushNotifications(data.id).catch(() => {});
   }
 
   useEffect(() => {
