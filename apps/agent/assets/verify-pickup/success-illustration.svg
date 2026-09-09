@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 555">
+<circle id="Ellipse 10" cx="75" cy="75" r="75" fill="#00BF29" fill-opacity="0.05"/>
+<circle id="Ellipse 11" cx="75.0625" cy="75.0002" r="59.0625" fill="#00BF29" fill-opacity="0.05"/>
+<g id="iconamoon:check-duotone">
+<rect x="32.9998" y="32.8125" width="84.375" height="84.375" rx="42.1875" fill="url(#paint0_linear_0_8)"/>
+<path id="Vector" d="M94.9998 61.8125L68.3332 88.8125L54.9998 75.3125" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_8" x1="75.1873" y1="32.8125" x2="75.1873" y2="117.188" gradientUnits="userSpaceOnUse">
+<stop stop-color="#00C02A"/>
+<stop offset="1" stop-color="#00821C"/>
+</linearGradient>
+</defs>
+</svg>

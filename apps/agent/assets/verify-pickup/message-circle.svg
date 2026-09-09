@@ -1,0 +1,6 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="message-circle">
+<rect width="36" height="36" rx="18" fill="#6EFF9E" fill-opacity="0.1"/>
+<path id="Vector" d="M27 18C27 22.9706 22.9706 27 18 27C16.4576 27 15.0057 26.612 13.7368 25.9282C11.9669 24.9745 10.776 25.8612 9.72562 26.0202C9.56628 26.0444 9.40761 25.9865 9.29366 25.8726C9.1207 25.6996 9.08778 25.4322 9.18333 25.207C9.59557 24.2354 9.97409 22.3941 9.45797 20.8421C9.16087 19.9487 9 18.9931 9 18C9 13.0294 13.0294 9 18 9C22.9706 9 27 13.0294 27 18Z" stroke="#3EA35F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>
