@@ -46,11 +46,14 @@ const config: ExpoConfig = {
     favicon: "./assets/favicon.png",
     bundler: "metro",
   },
-  // Set by `eas init` — until then, push-notification registration no-ops (see
-  // lib/push-notifications.ts). Fill EAS_PROJECT_ID_CONSUMER in .env once you have it.
+  // From `eas init` (@sirsams-team/consumer). Not a secret — it's a public project
+  // identifier, not a credential — so it's safe to hardcode as the fallback here;
+  // EAS_PROJECT_ID_CONSUMER in .env can still override it for other environments.
+  // Hardcoded (not env-only) because `eas build`/`eas init` source-scan this file
+  // for a literal projectId rather than evaluating it through Expo's env loading.
   extra: {
     eas: {
-      projectId: process.env.EAS_PROJECT_ID_CONSUMER,
+      projectId: process.env.EAS_PROJECT_ID_CONSUMER ?? "5826e96e-0766-44b0-b03e-e18b6b110d9b",
     },
   },
 };
