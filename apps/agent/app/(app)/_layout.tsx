@@ -6,6 +6,7 @@ export default function AppLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="pickup/[id]/index" />
       <Stack.Screen name="pickup/[id]/verify" />
+      <Stack.Screen name="pickup/[id]/report-issue" />
     </Stack>
   );
 }

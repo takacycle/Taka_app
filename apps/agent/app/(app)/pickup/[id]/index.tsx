@@ -162,10 +162,7 @@ export default function PickupDetailScreen() {
           )}
         </Pressable>
 
-        <Pressable
-          style={styles.reportButton}
-          onPress={() => Alert.alert("Coming soon", "Issue reporting isn't wired up yet — contact your dispatcher directly for now.")}
-        >
+        <Pressable style={styles.reportButton} onPress={() => router.push(`/pickup/${pickup.id}/report-issue`)}>
           <AlertIcon width={18} height={18} />
           <Text style={styles.reportButtonText}>Report an Issue</Text>
         </Pressable>

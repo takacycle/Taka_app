@@ -42,6 +42,10 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.content}>
+        <Pressable style={styles.row} onPress={() => router.push("/(app)/support")}>
+          <Text style={styles.rowText}>Contact support</Text>
+        </Pressable>
+
         <Pressable style={styles.row} onPress={signOut}>
           <Text style={styles.rowText}>Sign out</Text>
         </Pressable>

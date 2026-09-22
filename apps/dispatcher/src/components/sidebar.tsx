@@ -32,6 +32,7 @@ const BUILT_ROUTES = new Set([
   "/audits",
   "/fraud",
   "/challenges",
+  "/support",
 ]);
 
 export function Sidebar() {

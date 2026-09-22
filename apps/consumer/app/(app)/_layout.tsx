@@ -9,6 +9,7 @@ export default function AppLayout() {
       <Stack.Screen name="leaderboard" />
       <Stack.Screen name="rewards" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="support" />
       <Stack.Screen name="request-pickup" />
       <Stack.Screen name="select-zone" options={{ presentation: "modal" }} />
     </Stack>
